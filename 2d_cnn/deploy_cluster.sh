@@ -1,6 +1,6 @@
 #!/bin/bash
 
-srcdir=$(dirname ${BASH_SOURCE[0]})
+srcdir=$(realpath ${BASH_SOURCE[0]} | xargs dirname)
 config_file=$1
 
 srun -t 6:00:00 -c 1 --mem 4G \

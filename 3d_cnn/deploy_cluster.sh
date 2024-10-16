@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export srcdir="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+export srcdir=$(realpath ${BASH_SOURCE[0]} | xargs dirname)
 config_file=$1
 export PYTHONPATH=${srcdir}/src
 echo PYTHONPATH=$PYTHONPATH
