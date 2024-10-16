@@ -11,6 +11,9 @@
 
 module purge
 module load deepict/1.0.0
+export srcdir=$DEEPICT_ROOT/3d_cnn
+export PYTHONPATH=${srcdir}/src:$PYTHONPATH
+
 export QT_QPA_PLATFORM='offscreen'
 export DISPLAY=0.0
 export PYTHONUNBUFFERED=1
