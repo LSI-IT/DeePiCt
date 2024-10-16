@@ -23,10 +23,10 @@ user_config_file = cli_config["config"]
 with open(user_config_file, 'r') as user_config:
     config = yaml.safe_load(user_config)
 
-srcdir = workflow.basedir
+srcdir = os.getenv('DEEPICT_ROOT', '$DEEPICT_ROOT not found.')
 
 # Workaround so filter rule can be applied to both training and pred tomos
-filter_meta = pd.DataFrame({"prefix":[], "data":[]}) 
+filter_meta = pd.DataFrame({"prefix":[], "data":[]})
 training_meta = pd.DataFrame()
 prediction_meta = pd.DataFrame()
 
@@ -37,7 +37,7 @@ if (
     (config["prediction"]["active"] and config["prediction"]["model"] is None)
 ):
     training_meta = pd.read_csv(config["data"]["training_data"])
-    
+
     if config["data"]["train_workdir"]:
         os.makedirs(config["data"]["train_workdir"], exist_ok=True)
         if training_meta.get("id") is None:
@@ -46,7 +46,7 @@ if (
             training_meta["prefix"] = config["data"]["train_workdir"] + '/' + training_meta["id"].astype(str)
     else:
         training_meta["prefix"] = training_meta["data"].apply(lambda x: os.path.splitext(x)[0])
-    
+
     training_meta["filtered"] = training_meta["prefix"] + "_filtered.mrc"
     training_meta["labels_remapped"] = training_meta["prefix"] + "_labels_remapped.mrc"
     training_meta["slices"] = training_meta["prefix"] + "_slices.h5"
@@ -74,7 +74,7 @@ if config["prediction"]["active"] | config["postprocessing"]["active"]:
 
     else:
         prediction_meta["prefix"] = prediction_meta["data"].apply(lambda x: os.path.splitext(x)[0])
-    
+
     prediction_meta["filtered"] = prediction_meta["prefix"] + "_filtered.mrc"
     prediction_meta["prediction"] = prediction_meta["prefix"] + "_pred.mrc"
     prediction_meta["polished"] = prediction_meta["prefix"] + "_pred_polished.mrc"
@@ -139,7 +139,7 @@ postprocessed_pattern = "{prefix}_pred_polished.mrc"
 
 # Rules
 rule all:
-    input: 
+    input:
         targets
 
 rule filter_tomogram:
@@ -283,7 +283,7 @@ rule predict_organelles:
         cores       = 4,
         memory      = "16G",
         gres        = '#SBATCH -p gpu\n#SBATCH --gres=gpu:1'
-    resources: 
+    resources:
         gpu=1
     shell:
         f"""
