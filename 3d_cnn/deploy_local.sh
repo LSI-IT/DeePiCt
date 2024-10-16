@@ -10,5 +10,5 @@ snakemake \
     --snakefile "${srcdir}/snakefile" \
     --config config="${config_file}" gpu=$CUDA_VISIBLE_DEVICES \
     --printshellcmds \
-    --cores 1 --resources gpu=1
-
+    --cores 1 \
+    --resources gpu=1
