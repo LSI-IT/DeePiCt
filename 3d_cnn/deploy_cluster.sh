@@ -7,9 +7,6 @@ echo PYTHONPATH=$PYTHONPATH
 
 module load cuda/12.2.2
 
-source ~/.bashrc
-conda activate snakemake
-
 srun -t 10:00:00 -c 1 --mem 4G \
     snakemake \
     --snakefile "${srcdir}/snakefile" \
