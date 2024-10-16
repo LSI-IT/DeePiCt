@@ -8,4 +8,5 @@ snakemake \
     --config config="${config_file}" \
     --forceall \
     --printshellcmds \
-    --cores 1 --resources gpu=1
+    --cores 1 \
+    --resources gpu=1
