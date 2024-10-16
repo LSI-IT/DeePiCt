@@ -2,7 +2,7 @@
 
 export srcdir=$(realpath ${BASH_SOURCE[0]} | xargs dirname)
 config_file=$1
-export PYTHONPATH=${srcdir}/src
+export PYTHONPATH=${srcdir}/src:$PYTHONPATH
 echo PYTHONPATH=$PYTHONPATH
 module load CUDA
 
