@@ -10,6 +10,5 @@ srun -t 6:00:00 -c 1 --mem 4G \
     --config config="${config_file}" \
     --jobscript "${srcdir}/jobscript.sh" \
     --jobs 20 \
-    --use-conda \
     --printshellcmds \
     --latency-wait 30

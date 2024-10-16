@@ -7,6 +7,5 @@ snakemake \
     --snakefile "${srcdir}/snakefile.py" \
     --config config="${config_file}" \
     --forceall \
-    --use-conda \
     --printshellcmds \
     --cores 1 --resources gpu=1
