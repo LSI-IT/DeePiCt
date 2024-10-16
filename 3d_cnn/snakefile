@@ -100,11 +100,11 @@ rule partition_training:
     params:
           config=user_config_file,
           logdir=config["cluster"]["logdir"],
-          walltime="01:10:00",
+          walltime="00:10:00",
           nodes=1,
           cores=1,
           memory="30G",
-          gres=''
+          gres='#SBATCH -p sb-96'
     shell:
          f"""
          python3 {scriptdir}/generate_training_data.py \
@@ -122,11 +122,11 @@ rule training_3dunet:
     params:
           config=user_config_file,
           logdir=config["cluster"]["logdir"],
-          walltime="2-05:00:00",
+          walltime="3-00:00:00",
           nodes=1,
-          cores=4,
+          cores=16,
           memory="200G",
-          gres='#SBATCH -p gpu-el8\n#SBATCH --gres=gpu:4'
+          gres='#SBATCH -p sb-gpu-a40\n#SBATCH --gpus=a40:4'
     resources:
              gpu=4
     shell:
@@ -148,7 +148,7 @@ rule predict_partition:
           nodes=1,
           cores=1,
           memory="30G",
-          gres=''
+          gres='#SBATCH -p sb-96'
     shell:
          f"""
         python3 {scriptdir}/generate_prediction_partition.py \
@@ -166,13 +166,13 @@ rule segment:
     params:
           config=user_config_file,
           logdir=config["cluster"]["logdir"],
-          walltime="04:20:00",
+          walltime="04:00:00",
           nodes=1,
           cores=4,
-          memory="150G",
-          gres='#SBATCH -p gpu-el8\n#SBATCH --gres=gpu:1'
+          memory="60G",
+          gres='#SBATCH -p sb-gpu-a40\n#SBATCH --gpus=a40:1'
     resources:
-             gpu=2
+             gpu=1
     shell:
          f"""
         python3 {scriptdir}/segment.py \
@@ -195,7 +195,7 @@ rule assemble_prediction:
           nodes=1,
           cores=2,
           memory="20G",
-          gres=''
+          gres='#SBATCH -p sb-96'
     shell:
          f"""
         python3 {scriptdir}/assemble_prediction.py \
@@ -217,7 +217,7 @@ rule postprocess_prediction:
           nodes=1,
           cores=4,
           memory="140G",
-          gres=''
+          gres='#SBATCH -p sb-96'
     shell:
          f"""
         python3 {scriptdir}/clustering_and_cleaning.py \
@@ -239,7 +239,7 @@ rule particle_picking_evaluation:
           nodes=1,
           cores=2,
           memory="10G",
-          gres=''
+          gres='#SBATCH -p sb-96'
     shell:
          f"""
         python3 {scriptdir}/particle_picking_evaluation.py \
@@ -261,7 +261,7 @@ rule segmentation_evaluation:
           nodes=1,
           cores=2,
           memory="60G",
-          gres=''
+          gres='#SBATCH -p sb-96'
     shell:
          f"""
         python3 {scriptdir}/segmentation_evaluation.py \
