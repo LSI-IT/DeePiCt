@@ -9,6 +9,8 @@
 #SBATCH --cpus-per-task={job.params.cores}
 {job.params.gres}
 
+module purge
+module load deepict/1.0.0
 export DISPLAY=0.0
 export PYTHONUNBUFFERED=1
 
