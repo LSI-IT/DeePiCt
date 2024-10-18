@@ -6,6 +6,7 @@ parser.add_argument("-config_file", "--config_file", type=str)
 parser.add_argument("-pythonpath", "--pythonpath", type=str)
 parser.add_argument("-fold", "--fold", type=str, default="None")
 parser.add_argument("-gpu", "--gpu", help="cuda visible devices", type=str)
+parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print out verbose messages.")
 
 args = parser.parse_args()
 pythonpath = args.pythonpath
