@@ -16,6 +16,6 @@ snakemake \
 --jobscript "${srcdir}/jobscript.sh" \
 --jobs 20 \
 --printshellcmds \
---latency-wait 30 \
+--latency-wait 120 \
 --max-jobs-per-second 1 \
 --max-status-checks-per-second 0.1
