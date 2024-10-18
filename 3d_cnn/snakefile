@@ -103,11 +103,10 @@ rule partition_training:
           memory="30G",
           gres='#SBATCH -p sb-96'
     shell:
-         f"""
-         python3 {scriptdir}/generate_training_data.py \
-         --pythonpath {srcdir} \
-         --config_file {user_config_file} \
-         """ + "--fold None --tomo_name {wildcards.tomo_name}"
+         "python3 {scriptdir}/generate_training_data.py "
+         "--pythonpath {srcdir} "
+         "--config_file {user_config_file} "
+         "--fold None --tomo_name {wildcards.tomo_name}"
 
 rule training_3dunet:
     conda:
@@ -127,11 +126,10 @@ rule training_3dunet:
     resources:
              gpu=4
     shell:
-         f"""
-        python3 {scriptdir}/training.py \
-        --pythonpath {srcdir} \
-        --config_file {user_config_file} \
-        """ + "--fold None --gpu $CUDA_VISIBLE_DEVICES"
+        "python3 {scriptdir}/training.py "
+        "--pythonpath {srcdir} "
+        "--config_file {user_config_file} "
+        "--fold None --gpu $CUDA_VISIBLE_DEVICES"
 
 rule predict_partition:
     conda:
@@ -147,11 +145,10 @@ rule predict_partition:
           memory="30G",
           gres='#SBATCH -p sb-96'
     shell:
-         f"""
-        python3 {scriptdir}/generate_prediction_partition.py \
-        --pythonpath {srcdir} \
-        --config_file {user_config_file} \
-        """ + "--fold None --tomo_name {wildcards.tomo_name}"
+        "python3 {scriptdir}/generate_prediction_partition.py "
+        "--pythonpath {srcdir} "
+        "--config_file {user_config_file} "
+        "--fold None --tomo_name {wildcards.tomo_name}"
 
 rule segment:
     conda:
@@ -171,12 +168,11 @@ rule segment:
     resources:
              gpu=1
     shell:
-         f"""
-        python3 {scriptdir}/segment.py \
-        --pythonpath {srcdir} \
-        --config_file {user_config_file} \
-        """ + "--fold None --tomo_name {wildcards.tomo_name} \
-         --gpu $CUDA_VISIBLE_DEVICES"
+        "python3 {scriptdir}/segment.py "
+        "--pythonpath {srcdir} "
+        "--config_file {user_config_file} "
+        "--fold None --tomo_name {wildcards.tomo_name} "
+        "--gpu $CUDA_VISIBLE_DEVICES"
 
 rule assemble_prediction:
     conda:
@@ -194,11 +190,10 @@ rule assemble_prediction:
           memory="20G",
           gres='#SBATCH -p sb-96'
     shell:
-         f"""
-        python3 {scriptdir}/assemble_prediction.py \
-        --pythonpath {srcdir} \
-        --config_file {user_config_file} \
-        """ + "--fold None --tomo_name {wildcards.tomo_name}"
+        "python3 {scriptdir}/assemble_prediction.py "
+        "--pythonpath {srcdir} "
+        "--config_file {user_config_file} "
+        "--fold None --tomo_name {wildcards.tomo_name}"
 
 rule postprocess_prediction:
     conda:
@@ -216,11 +211,10 @@ rule postprocess_prediction:
           memory="140G",
           gres='#SBATCH -p sb-96'
     shell:
-         f"""
-        python3 {scriptdir}/clustering_and_cleaning.py \
-        --pythonpath {srcdir} \
-        --config_file {user_config_file} \
-        """ + "--fold None --tomo_name {wildcards.tomo_name}"
+        "python3 {scriptdir}/clustering_and_cleaning.py "
+        "--pythonpath {srcdir} "
+        "--config_file {user_config_file} "
+        "--fold None --tomo_name {wildcards.tomo_name}"
 
 rule particle_picking_evaluation:
     conda:
@@ -238,11 +232,10 @@ rule particle_picking_evaluation:
           memory="10G",
           gres='#SBATCH -p sb-96'
     shell:
-         f"""
-        python3 {scriptdir}/particle_picking_evaluation.py \
-        --pythonpath {srcdir} \
-        --config_file {user_config_file} \
-        """ + "--fold None --tomo_name {wildcards.tomo_name}"
+        "python3 {scriptdir}/particle_picking_evaluation.py "
+        "--pythonpath {srcdir} "
+        "--config_file {user_config_file} "
+        "--fold None --tomo_name {wildcards.tomo_name}"
 
 rule segmentation_evaluation:
     conda:
@@ -260,11 +253,10 @@ rule segmentation_evaluation:
           memory="60G",
           gres='#SBATCH -p sb-96'
     shell:
-         f"""
-        python3 {scriptdir}/segmentation_evaluation.py \
-        --pythonpath {srcdir} \
-        --config_file {user_config_file} \
-        """ + "--fold None --tomo_name {wildcards.tomo_name}"
+        "python3 {scriptdir}/segmentation_evaluation.py "
+        "--pythonpath {srcdir} "
+        "--config_file {user_config_file} "
+        "--fold None --tomo_name {wildcards.tomo_name}"
 
 
 # stats_done = config.output_dir + "/predictions/." + model_name + "/" + \
@@ -288,11 +280,10 @@ rule segmentation_evaluation:
 #     resources:
 #              gpu=4
 #     shell:
-#          f"""
-#         python3 {scriptdir}/training.py \
-#         --pythonpath {srcdir} \
-#         --config_file {user_config_file} \
-#         """ + "--fold None --gpu $CUDA_VISIBLE_DEVICES"
+#         "python3 {scriptdir}/training.py "
+#         "--pythonpath {srcdir} "
+#         "--config_file {user_config_file} "
+#         "--fold None --gpu $CUDA_VISIBLE_DEVICES"
 
 
 #rule filter:
@@ -308,9 +299,8 @@ rule segmentation_evaluation:
 #          cores=2,
 #          memory="15G",
 #          gres=''
-#    shell:
-#         f"""
-#        python3 {scriptdir}/match_spectrum.py \
-#        --pythonpath {srcdir} \
-#        --config_file {user_config_file} \
-#        """ + "--fold None --tomo_name {wildcards.tomo_name}"
+#     shell:
+#         "python3 {scriptdir}/match_spectrum.py "
+#         "--pythonpath {srcdir} "
+#         "--config_file {user_config_file} "
+#         "--fold None --tomo_name {wildcards.tomo_name}"
