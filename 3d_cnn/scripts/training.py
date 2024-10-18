@@ -16,10 +16,10 @@ if args.verbose:
     log_level = logging.DEBUG
 
 logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger()
+logit = logging.getLogger()
 
 # Log arguments
-logger.debug(f"Arguments received: {args}")
+logit.debug(f"Arguments received: {args}")
 
 pythonpath = args.pythonpath
 config_file = args.config_file
@@ -81,20 +81,20 @@ fold = ast.literal_eval(args.fold)
 model_path, model_name = get_model_name(config, fold)
 last_model_path = model_path[:-4] + "_last.pth"
 best_model_path = model_path[:-4] + "_best.pth"
-print("model_path: ", model_path)
+logit.info(f"model_path: {model_path}")
 if fold is None:
     snakemake_pattern = ".done_patterns/" + model_path + "_None.pth.done"
 else:
     snakemake_pattern = ".done_patterns/" + model_path + "_" + str(fold) + ".pth.done"
 
 if os.path.exists(model_path) and not config.force_retrain:
-    print("model exists already!")
+    logit.info("model exists already!")
 else:
-    print("training data loading process starting")
+    logit.info("training data loading process starting")
     logging_dir = os.path.join(config.output_dir, "logging")
     model_dir = os.path.join(config.output_dir, "models")
     models_table = os.path.join(model_dir, "models.csv")
-    print(models_table)
+    logit.info(models_table)
     log_path = os.path.join(logging_dir, model_name)
     os.makedirs(log_path, exist_ok=True)
     os.makedirs(model_dir, exist_ok=True)
@@ -153,21 +153,21 @@ else:
         # save best epoch
         if current_validation_loss <= validation_loss:
             best_epoch = current_epoch
-            print("Best epoch! -->", best_epoch, "with validation loss:", current_validation_loss)
+            logit.info(f"Best epoch! --> {best_epoch} with validation loss: {current_validation_loss}")
             validation_loss = current_validation_loss
             save_unet_model(path_to_model=model_path, epoch=current_epoch,
                             net=net, optimizer=optimizer, loss=current_validation_loss,
                             model_descriptor=model_descriptor)
-        print("Epoch =", current_epoch, " was not the best.")
-        print("The current best is epoch =", best_epoch)
+        logit.info(f"Epoch = {current_epoch} was not the best.")
+        logit.info(f"The current best is epoch = {best_epoch}")
         save_unet_model(path_to_model=last_model_path, epoch=current_epoch,
                         net=net, optimizer=optimizer, loss=current_validation_loss,
                         model_descriptor=model_descriptor)
-    print("We have finished the training!")
-    print("Best validation loss: {} of epoch {}".format(validation_loss, best_epoch))
+    logit.info("We have finished the training!")
+    logit.info(f"Best validation loss: {validation_loss} of epoch {best_epoch}")
     shutil.copy(src=model_path, dst=best_model_path)
 # For snakemake:
-print("snakemake_pattern:", snakemake_pattern)
+logit.info(f"snakemake_pattern: {snakemake_pattern}")
 os.makedirs(os.path.dirname(snakemake_pattern), exist_ok=True)
 with open(file=snakemake_pattern, mode="w") as f:
-    print("Creating snakemake pattern", snakemake_pattern)
+    logit.info(f"Creating snakemake pattern: {snakemake_pattern}")
