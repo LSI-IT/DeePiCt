@@ -25,7 +25,9 @@ pythonpath = args.pythonpath
 tomo_name = args.tomo_name
 config_file = args.config_file
 
-sys.path.append(pythonpath)
+if pythonpath not in sys.path:
+    sys.path.append(pythonpath)
+    logger.debug(f"Added {pythonpath} to sys.path")
 
 import os
 import ast
