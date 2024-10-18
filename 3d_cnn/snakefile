@@ -11,7 +11,7 @@ cli_config = config.copy()
 user_config_file = cli_config["config"]
 CUDA_VISIBLE_DEVICES = cli_config["gpu"]
 
-with open(user_config_file, 'r') as user_config:
+with open(user_config_file, "r") as user_config:
     config = yaml.safe_load(user_config)
 
 srcdir = Path(workflow.basedir, "src")
@@ -67,16 +67,48 @@ training_part_pattern = Path(work_dir, "training_data/{tomo_name}/partition.h5")
 done_training_pattern = model_path[:-4] + "_best.pth"
 testing_part_pattern = Path(work_dir, "testing_data/{tomo_name}/partition.h5")
 done_testing_part_pattern = Path(work_dir, "testing_data/{tomo_name}/partition.h5")
-segmented_part_pattern = Path(".done_patterns", model_name, ".{tomo_name}.None.segmentation.done")
+segmented_part_pattern = Path(
+    ".done_patterns", model_name, ".{tomo_name}.None.segmentation.done"
+)
 # noinspection PyTypeChecker
-assemble_probability_map_done = Path(output_dir, "predictions", model_name, "{tomo_name}", pred_class, "probability_map.mrc")
+assemble_probability_map_done = Path(
+    output_dir,
+    "predictions",
+    model_name,
+    "{tomo_name}",
+    pred_class,
+    "probability_map.mrc",
+)
 # noinspection PyTypeChecker
-postprocess_prediction_done = Path(output_dir, "predictions", model_name, "{tomo_name}", pred_class, "post_processed_prediction.mrc")
+postprocess_prediction_done = Path(
+    output_dir,
+    "predictions",
+    model_name,
+    "{tomo_name}",
+    pred_class,
+    "post_processed_prediction.mrc",
+)
 
 # noinspection PyTypeChecker
-particle_picking_pr_done = Path(output_dir, "predictions", model_name, "{tomo_name}", pred_class, "pr_radius_", str(pr_tolerance_radius), "detected.None.done_pp_snakemake")
+particle_picking_pr_done = Path(
+    output_dir,
+    "predictions",
+    model_name,
+    "{tomo_name}",
+    pred_class,
+    "pr_radius_",
+    str(pr_tolerance_radius),
+    "detected.None.done_pp_snakemake",
+)
 # noinspection PyTypeChecker
-dice_evaluation_done = Path(output_dir, "predictions", model_name, "{tomo_name}", pred_class, ".None.done_dice_eval_snakemake")
+dice_evaluation_done = Path(
+    output_dir,
+    "predictions",
+    model_name,
+    "{tomo_name}",
+    pred_class,
+    ".None.done_dice_eval_snakemake",
+)
 
 print("training tomograms:", training_tomos)
 targets = []
@@ -107,15 +139,17 @@ if config["debug"]:
     print("TARGETS:\n")
     print(targets)
 
+
 rule all:
     input:
-        targets
+        targets,
+
 
 rule partition_training:
     conda:
         "environment.yaml"
     output:
-        done_file=training_part_pattern
+        done_file=training_part_pattern,
     params:
         config=user_config_file,
         logdir=config["cluster"]["logdir"],
@@ -123,20 +157,21 @@ rule partition_training:
         nodes=1,
         cores=1,
         memory="30G",
-        gres='#SBATCH -p sb-96'
+        gres="#SBATCH -p sb-96",
     shell:
         "python3 {scriptdir}/generate_training_data.py "
         "--pythonpath {srcdir} "
         "--config_file {user_config_file} "
         "--fold None --tomo_name {wildcards.tomo_name}"
 
+
 rule training_3dunet:
     conda:
         "environment.yaml"
     input:
-        training_set_done_file=expand([training_part_pattern], tomo_name=training_tomos)
+        training_set_done_file=expand([training_part_pattern], tomo_name=training_tomos),
     output:
-        done=done_training_pattern
+        done=done_training_pattern,
     params:
         config=user_config_file,
         logdir=config["cluster"]["logdir"],
@@ -144,20 +179,21 @@ rule training_3dunet:
         nodes=1,
         cores=16,
         memory="200G",
-        gres='#SBATCH -p sb-gpu-a40\n#SBATCH --gpus=a40:4'
+        gres="#SBATCH -p sb-gpu-a40\n#SBATCH --gpus=a40:4",
     resources:
-        gpu=4
+        gpu=4,
     shell:
         "python3 {scriptdir}/training.py "
         "--pythonpath {srcdir} "
         "--config_file {user_config_file} "
         "--fold None --gpu $CUDA_VISIBLE_DEVICES"
 
+
 rule predict_partition:
     conda:
         "environment.yaml"
     output:
-        done_file=done_testing_part_pattern
+        done_file=done_testing_part_pattern,
     params:
         config=user_config_file,
         logdir=config["cluster"]["logdir"],
@@ -165,21 +201,23 @@ rule predict_partition:
         nodes=1,
         cores=1,
         memory="30G",
-        gres='#SBATCH -p sb-96'
+        gres="#SBATCH -p sb-96",
     shell:
         "python3 {scriptdir}/generate_prediction_partition.py "
         "--pythonpath {srcdir} "
         "--config_file {user_config_file} "
         "--fold None --tomo_name {wildcards.tomo_name}"
 
+
 rule segment:
     conda:
         "environment.yaml"
     input:
-        [done_training_pattern, done_testing_part_pattern] if config["training"][
-            "active"] else done_testing_part_pattern
+        [done_training_pattern, done_testing_part_pattern]
+        if config["training"]["active"]
+        else done_testing_part_pattern,
     output:
-        file=segmented_part_pattern
+        file=segmented_part_pattern,
     params:
         config=user_config_file,
         logdir=config["cluster"]["logdir"],
@@ -187,9 +225,9 @@ rule segment:
         nodes=1,
         cores=4,
         memory="60G",
-        gres='#SBATCH -p sb-gpu-a40\n#SBATCH --gpus=a40:1'
+        gres="#SBATCH -p sb-gpu-a40\n#SBATCH --gpus=a40:1",
     resources:
-        gpu=1
+        gpu=1,
     shell:
         "python3 {scriptdir}/segment.py "
         "--pythonpath {srcdir} "
@@ -197,13 +235,14 @@ rule segment:
         "--fold None --tomo_name {wildcards.tomo_name} "
         "--gpu $CUDA_VISIBLE_DEVICES"
 
+
 rule assemble_prediction:
     conda:
         "environment.yaml"
     input:
-        segmented_part_pattern
+        segmented_part_pattern,
     output:
-        file=assemble_probability_map_done
+        file=assemble_probability_map_done,
     params:
         config=user_config_file,
         logdir=config["cluster"]["logdir"],
@@ -211,20 +250,21 @@ rule assemble_prediction:
         nodes=1,
         cores=2,
         memory="20G",
-        gres='#SBATCH -p sb-96'
+        gres="#SBATCH -p sb-96",
     shell:
         "python3 {scriptdir}/assemble_prediction.py "
         "--pythonpath {srcdir} "
         "--config_file {user_config_file} "
         "--fold None --tomo_name {wildcards.tomo_name}"
 
+
 rule postprocess_prediction:
     conda:
         "environment.yaml"
     input:
-        assemble_probability_map_done
+        assemble_probability_map_done,
     output:
-        postprocess_prediction_done
+        postprocess_prediction_done,
     params:
         config=user_config_file,
         logdir=config["cluster"]["logdir"],
@@ -232,20 +272,21 @@ rule postprocess_prediction:
         nodes=1,
         cores=4,
         memory="140G",
-        gres='#SBATCH -p sb-96'
+        gres="#SBATCH -p sb-96",
     shell:
         "python3 {scriptdir}/clustering_and_cleaning.py "
         "--pythonpath {srcdir} "
         "--config_file {user_config_file} "
         "--fold None --tomo_name {wildcards.tomo_name}"
 
+
 rule particle_picking_evaluation:
     conda:
         "environment.yaml"
     input:
-        postprocess_prediction_done
+        postprocess_prediction_done,
     output:
-        file=particle_picking_pr_done
+        file=particle_picking_pr_done,
     params:
         config=user_config_file,
         logdir=config["cluster"]["logdir"],
@@ -253,20 +294,21 @@ rule particle_picking_evaluation:
         nodes=1,
         cores=2,
         memory="10G",
-        gres='#SBATCH -p sb-96'
+        gres="#SBATCH -p sb-96",
     shell:
         "python3 {scriptdir}/particle_picking_evaluation.py "
         "--pythonpath {srcdir} "
         "--config_file {user_config_file} "
         "--fold None --tomo_name {wildcards.tomo_name}"
 
+
 rule segmentation_evaluation:
     conda:
         "environment.yaml"
     input:
-        file=postprocess_prediction_done
+        file=postprocess_prediction_done,
     output:
-        file=dice_evaluation_done
+        file=dice_evaluation_done,
     params:
         config=user_config_file,
         logdir=config["cluster"]["logdir"],
@@ -274,7 +316,7 @@ rule segmentation_evaluation:
         nodes=1,
         cores=2,
         memory="60G",
-        gres='#SBATCH -p sb-96'
+        gres="#SBATCH -p sb-96",
     shell:
         "python3 {scriptdir}/segmentation_evaluation.py "
         "--pythonpath {srcdir} "
