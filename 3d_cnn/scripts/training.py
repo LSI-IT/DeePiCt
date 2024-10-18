@@ -23,7 +23,10 @@ logit.debug(f"Arguments received: {args}")
 
 pythonpath = args.pythonpath
 config_file = args.config_file
-sys.path.append(pythonpath)
+
+if pythonpath not in sys.path:
+    sys.path.append(pythonpath)
+    logit.debug(f"Added {pythonpath} to sys.path")
 
 import os
 import ast
