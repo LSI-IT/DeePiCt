@@ -1,4 +1,5 @@
 import os
+import sys
 import yaml
 from pathlib import Path
 
@@ -18,7 +19,28 @@ scriptdir = Path(workflow.basedir, "scripts")
 
 # General data
 output_dir = config["output_dir"]
+if output_dir is not None:
+    try:
+        os.makedirs(output_dir)
+    except FileExistsError:
+        pass
+else:
+    print("The output_dir evaluates to None")
+    print(f"Please check your config file {user_config_file}")
+    print("Exiting...")
+    sys.exit(1)
+
 work_dir = config["work_dir"]
+if work_dir is not None:
+    try:
+        os.makedirs(work_dir)
+    except FileExistsError:
+        pass
+else:
+    print("The work_dir evaluates to None.")
+    print(f"Please check your config file {user_config_file}")
+    print("Exiting...")
+    sys.exit(1)
 
 # Tomogram lists
 training_tomos = config["tomos_sets"]["training_list"]
