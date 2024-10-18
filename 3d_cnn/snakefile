@@ -68,7 +68,7 @@ done_training_pattern = model_path[:-4] + "_best.pth"
 testing_part_pattern = Path(work_dir, "testing_data/{tomo_name}/partition.h5")
 done_testing_part_pattern = Path(work_dir, "testing_data/{tomo_name}/partition.h5")
 segmented_part_pattern = Path(
-    ".done_patterns", model_name, ".{tomo_name}.None.segmentation.done"
+    ".done_patterns", model_name + ".{tomo_name}.None.segmentation.done"
 )
 # noinspection PyTypeChecker
 assemble_probability_map_done = Path(
@@ -96,9 +96,9 @@ particle_picking_pr_done = Path(
     model_name,
     "{tomo_name}",
     pred_class,
-    "pr_radius_",
-    str(pr_tolerance_radius),
-    "detected.None.done_pp_snakemake",
+    "pr_radius_" + str(pr_tolerance_radius),
+    "detected",
+    ".None.done_pp_snakemake",
 )
 # noinspection PyTypeChecker
 dice_evaluation_done = Path(
@@ -136,7 +136,7 @@ if config["evaluation"]["segmentation_evaluation"]["active"]:
     targets += expand([dice_evaluation_done], tomo_name=prediction_tomos)
 
 if config["debug"]:
-    print("TARGETS:\n")
+    print(f"TARGETS:\n{targets}")
     print(targets)
 
 
