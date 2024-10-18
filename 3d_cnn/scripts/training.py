@@ -1,6 +1,7 @@
 import argparse
 import sys
 import logging
+from pathlib import Path
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-config_file", "--config_file", type=str)
@@ -86,9 +87,9 @@ last_model_path = model_path[:-4] + "_last.pth"
 best_model_path = model_path[:-4] + "_best.pth"
 logit.info(f"model_path: {model_path}")
 if fold is None:
-    snakemake_pattern = ".done_patterns/" + model_path + "_None.pth.done"
+    snakemake_pattern = Path(".done_patterns", model_path + "_None.pth.done")
 else:
-    snakemake_pattern = ".done_patterns/" + model_path + "_" + str(fold) + ".pth.done"
+    snakemake_pattern = Path(".done_patterns", model_path + "_" + str(fold) + ".pth.done")
 
 if os.path.exists(model_path) and not config.force_retrain:
     logit.info("model exists already!")
