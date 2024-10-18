@@ -59,7 +59,7 @@ logger.info(f"Output directory: {output_path_dir}, Output path: {output_path}")
 # print(output_path_dir)
 os.makedirs(name=output_path_dir, exist_ok=True)
 if os.path.isfile(output_path):
-    logger.info(f"Training partition already exists")
+    logger.info("Training partition already exists")
 else:
     logger.info("Training partition to be generated...")
     label_fractions_list = generate_strongly_labeled_partition(
