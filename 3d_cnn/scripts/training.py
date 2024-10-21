@@ -55,6 +55,7 @@ from constants.config import get_model_name
 
 
 def load_checkpoint(filename: str):
+    logit.debug(f"Entered the load_checkpoint function with filename: {filename}")
     device = get_device()
     checkpoint = torch.load(filename, map_location=device)
     model_descriptor = checkpoint['model_descriptor']
@@ -73,6 +74,7 @@ def load_checkpoint(filename: str):
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     validation_loss = checkpoint['loss']
     # losslogger = checkpoint['losslogger']
+    logit.debug(f"Leaving the load_checkpoint function and returning net: {net} optimizer: {optimizer} start_epoch: {start_epoch} validation_loss: {validation_loss}")
     return net, optimizer, start_epoch, validation_loss
 
 
@@ -86,6 +88,9 @@ model_path, model_name = get_model_name(config, fold)
 last_model_path = model_path[:-4] + "_last.pth"
 best_model_path = model_path[:-4] + "_best.pth"
 logit.info(f"model_path: {model_path}")
+logit.info(f"model_name: {model_name}")
+logit.info(f"last_model_path: {last_model_path}")
+logit.info(f"best_model_path: {best_model_path}")
 if fold is None:
     snakemake_pattern = Path(".done_patterns", model_path + "_None.pth.done")
 else:
@@ -173,5 +178,6 @@ else:
 # For snakemake:
 logit.info(f"snakemake_pattern: {snakemake_pattern}")
 os.makedirs(os.path.dirname(snakemake_pattern), exist_ok=True)
+logit.info(f"Created the directories: {os.path.dirname(snakemake_pattern)}")
 with open(file=snakemake_pattern, mode="w") as f:
     logit.info(f"Creating snakemake pattern: {snakemake_pattern}")

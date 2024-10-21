@@ -45,11 +45,15 @@ df = pd.read_csv(config.dataset_table, dtype={"tomo_name": str})
 df.set_index('tomo_name', inplace=True)
 fold = ast.literal_eval(args.fold)
 path_to_raw = df[config.processing_tomo][tomo_name]
+logger.debug(f"path_to_raw: {path_to_raw}")
 labels_dataset_list = list()
 for semantic_class in config.semantic_classes:
     mask_name = semantic_class + '_mask'
+    logger.debug(f"mask_name: {mask_name}")
     path_to_mask = df[mask_name][tomo_name]
+    logger.debug(f"path_to_mask: {path_to_mask}")
     labels_dataset_list.append(path_to_mask)
+    logger.debug(f"labels_dataset_list: {labels_dataset_list}")
 
 box_shape = (config.box_size, config.box_size, config.box_size)
 output_path_dir, output_path = training_partition_path(output_dir=config.work_dir,
@@ -59,9 +63,9 @@ logger.info(f"Output directory: {output_path_dir}, Output path: {output_path}")
 # print(output_path_dir)
 os.makedirs(name=output_path_dir, exist_ok=True)
 if os.path.isfile(output_path):
-    logger.info("Training partition already exists")
+    logger.info(f"Training partition {output_path} already exists")
 else:
-    logger.info("Training partition to be generated...")
+    logger.info(f"Training partition {output_path} to be generated...")
     label_fractions_list = generate_strongly_labeled_partition(
         path_to_raw=path_to_raw,
         labels_dataset_paths_list=labels_dataset_list,
@@ -83,5 +87,6 @@ else:
 # For snakemake
 snakemake_pattern = "training_data/{tomo_name}/.train_partition.{fold}.done".format(tomo_name=tomo_name, fold=str(fold))
 snakemake_pattern = os.path.join(config.work_dir, snakemake_pattern)
+logger.info(f"snakemake_pattern: {snakemake_pattern}")
 with open(snakemake_pattern, "w") as f:
     logger.info("Creating snakemake pattern")
