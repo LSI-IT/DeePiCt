@@ -289,13 +289,13 @@ def load_and_normalize_dataset_list(training_partition_paths: list,
             # Normalize data
             raw_data = preprocess_data(raw_data)
             raw_data = np.array(raw_data)
-            labels = np.array(labels, dtype=np.long)
+            labels = np.array(labels, dtype=int)
             train_data += list(raw_data)
             train_labels += list(labels)
         else:
             # Normalize data
             raw_data = np.array(raw_data)
-            labels = np.array(labels, dtype=np.long)
+            labels = np.array(labels, dtype=int)
 
             train_data_tmp, train_labels_tmp, \
             val_data_tmp, val_labels_tmp, _ = \
