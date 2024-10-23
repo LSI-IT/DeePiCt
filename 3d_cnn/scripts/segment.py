@@ -49,7 +49,7 @@ from networks.utils import get_training_testing_lists
 
 gpu = args.gpu
 if gpu is None:
-    print("No CUDA_VISIBLE_DEVICES passed...")
+    logit.info("No CUDA_VISIBLE_DEVICES passed...")
     if torch.cuda.is_available():
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 else:
@@ -86,7 +86,7 @@ if run_job:
 
     if 'model_descriptor' not in checkpoint.keys():
         warnings.warn("Model without model descriptor... it will be added")
-        print("WARNING: model without model descriptor... it will be added")
+        logit.info("WARNING: model without model descriptor... it will be added")
         model_descriptor = model_descriptor_from_config(config)
         checkpoint["model_descriptor"] = model_descriptor
         torch.save({
@@ -97,8 +97,7 @@ if run_job:
             'loss': checkpoint['loss'],
         }, model_path)
     else:
-        print("Model trained under the following original settings:",
-              checkpoint['model_descriptor'])
+        logit.info(f"Model trained under the following original settings: {checkpoint['model_descriptor']}")
 
     model_descriptor = checkpoint['model_descriptor']
 
@@ -114,7 +113,7 @@ if run_job:
     model.to(device)
 
     if torch.cuda.device_count() > 1:
-        print("Let's use", torch.cuda.device_count(), "GPUs!")
+        logit.info(f"Let's use {torch.cuda.device_count()}GPUs!")
         model = nn.DataParallel(model)
 
         substring = 'module.'
@@ -144,13 +143,13 @@ if run_job:
     std_val = np.std(raw_dataset)
     del raw_dataset
 
-    print("Segmenting tomo", tomo_name)
+    logit.info(f"Segmenting tomo: {tomo_name}")
     segment_and_write(data_path=partition_path, model=model, label_name=model_name, mean_value=mean_val,
                       std_value=std_val)
-    print("The segmentation has finished!")
+    logit.info("The segmentation has finished!")
 
 # For snakemake:
 snakemake_pattern_dir = os.path.dirname(snakemake_pattern)
 os.makedirs(snakemake_pattern_dir, exist_ok=True)
 with open(file=snakemake_pattern, mode="w") as f:
-    print("Creating snakemake pattern", snakemake_pattern)
+    logit.info(f"Creating snakemake pattern {snakemake_pattern}")
