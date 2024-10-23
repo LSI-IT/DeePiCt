@@ -5,7 +5,7 @@ config_file=$1
 
 srun -t 6:00:00 -c 1 --mem 4G \
     snakemake \
-    --snakefile "${srcdir}/snakefile.py" \
+    --snakefile "${srcdir}/snakefile" \
     --cluster "sbatch" \
     --config config="${config_file}" \
     --jobscript "${srcdir}/jobscript.sh" \
