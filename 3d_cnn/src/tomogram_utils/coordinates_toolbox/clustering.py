@@ -49,7 +49,7 @@ def get_cluster_centroids(dataset: np.array, min_cluster_size: int,
     clusters_map_in_range = np.zeros(labeled_clusters.shape)
     clusters_map_in_range[np.isin(labeled_clusters, labels_list_within_range)] = 1
     # Find out the centroids of the labels within range
-    filtered_labeled_clusters = (labeled_clusters * clusters_map_in_range).astype(np.int)
+    filtered_labeled_clusters = (labeled_clusters * clusters_map_in_range).astype(int)
     props = regionprops_table(filtered_labeled_clusters, properties=('label', 'centroid'))
     centroids_list = [np.rint([x, y, z]) for _, x, y, z in sorted(zip(props['label'].tolist(),
                                                                       props['centroid-0'].tolist(),
@@ -67,7 +67,7 @@ def get_cluster_centroids_in_contact(dataset: np.array, min_cluster_size: int,
                                        max_cluster_size=max_cluster_size,
                                        connectivity=connectivity)
     # Apply mask for labels within range and labels with contact mask
-    labeled_clusters_in_contact = (labeled_clusters * contact_mask).astype(np.int)
+    labeled_clusters_in_contact = (labeled_clusters * contact_mask).astype(int)
     labels_list_in_contact = np.unique(labeled_clusters_in_contact)[1:]
     final_labels = np.intersect1d(labels_list_within_range, labels_list_in_contact)
     # Create binary mask of the labels within range and contact
@@ -98,7 +98,7 @@ def get_cluster_centroids_colocalization(dataset: np.array, min_cluster_size: in
     clusters_map_in_range = np.zeros(labeled_clusters.shape)
     clusters_map_in_range[np.isin(labeled_clusters, labels_list_within_range)] = 1
     # Find out the centroids of the labels within range
-    filtered_labeled_clusters = (labeled_clusters * clusters_map_in_range).astype(np.int)
+    filtered_labeled_clusters = (labeled_clusters * clusters_map_in_range).astype(int)
     props = regionprops_table(filtered_labeled_clusters, properties=('label', 'centroid'))
     centroids_list = [np.rint([x, y, z]) for _, x, y, z in sorted(zip(props['label'].tolist(),
                                                                       props['centroid-0'].tolist(),
