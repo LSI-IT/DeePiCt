@@ -64,13 +64,13 @@ else:
     run_job = True
 
 if run_job:
-    print("Processing tomo", tomo_name)
+    logger.info(f"Processing tomo: {tomo_name}")
     tomo_output_dir, output_path = get_probability_map_path(config.output_dir, model_name, tomo_name,
                                                             config.pred_class)
 
     for file in listdir(tomo_output_dir):
         if "motl" in file:
-            print("A motive list already exists:", file)
+            logger.info(f"A motive list already exists: {file}")
             shutil.move(os.path.join(tomo_output_dir, file), os.path.join(tomo_output_dir, "prev_" + file))
 
     assert os.path.isfile(output_path)
@@ -94,7 +94,7 @@ if run_job:
         prediction_dataset_thr[:, :, :ix] = np.zeros_like(prediction_dataset_thr[:, :, :ix])
         prediction_dataset_thr[:, :, -ix:] = np.zeros_like(prediction_dataset_thr[:, :, -ix:])
 
-    print("Region mask:", config.region_mask)
+    logger.info(f"Region mask: {config.region_mask}")
     df = pd.read_csv(config.dataset_table, dtype={"tomo_name": str})
     df.set_index("tomo_name", inplace=True)
     masking_file = df[config.region_mask][tomo_name]
@@ -110,9 +110,9 @@ if run_job:
         centroids_list = []
         cluster_size_list = []
     else:
-        print("masking_file:", masking_file)
+        logger.info(f"masking_file: {masking_file}")
         if isinstance(masking_file, float):
-            print("No intersecting mask available of the type {} for tomo {}.".format(config.region_mask, tomo_name))
+            logger.info(f"No intersecting mask available of the type {config.region_mask} for tomo {tomo_name}.")
             prediction_dataset_thr = prediction_dataset_thr.astype(np.int8)
             clusters_labeled_by_size, centroids_list, cluster_size_list = \
                 get_cluster_centroids(dataset=prediction_dataset_thr,
@@ -155,14 +155,14 @@ if run_job:
 
     clusters_output_path = get_post_processed_prediction_path(output_dir=config.output_dir, model_name=model_name,
                                                               tomo_name=tomo_name, semantic_class=config.pred_class)
-    print("clusters_output_path", clusters_output_path)
+    logger.info(f"clusters_output_path: {clusters_output_path}")
     clusters_output = 1*(clusters_labeled_by_size > 0)
     write_tomogram(output_path=clusters_output_path, tomo_data=clusters_output)
 
     os.makedirs(tomo_output_dir, exist_ok=True)
     if calculate_motl:
         motl_name = "motl_" + str(len(centroids_list)) + ".csv"
-        print("motl_name:", motl_name)
+        logger.info(f"motl_name: {motl_name}")
         motl_file_name = os.path.join(tomo_output_dir, motl_name)
 
         if len(centroids_list) > 0:
@@ -170,12 +170,12 @@ if run_job:
                 list_of_peak_coordinates=centroids_list,
                 list_of_peak_scores=cluster_size_list, in_tom_format=False)
             motive_list_df.to_csv(motl_file_name, index=False, header=False)
-            print("Motive list saved in", motl_file_name)
+            logger.info(f"Motive list saved in {motl_file_name}")
         else:
-            print("Saving empty list!")
+            logger.info("Saving empty list!")
             motive_list_df = pd.DataFrame({})
             motive_list_df.to_csv(motl_file_name, index=False, header=False)
 
 # For snakemake:
 with open(file=snakemake_pattern, mode="w") as f:
-    print("Creating snakemake pattern", snakemake_pattern)
+    logger.info(f"Creating snakemake pattern: {snakemake_pattern}")
