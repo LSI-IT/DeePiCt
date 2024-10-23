@@ -25,7 +25,9 @@ logit = logging.getLogger()
 logit.debug(f"Arguments received: {args}")
 
 pythonpath = args.pythonpath
-sys.path.append(pythonpath)
+if pythonpath not in sys.path:
+    sys.path.append(pythonpath)
+    logit.debug(f"Added {pythonpath} to sys.path")
 
 import os
 import ast
