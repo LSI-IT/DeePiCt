@@ -1,13 +1,26 @@
 import argparse
 import sys
+import logging
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-pythonpath", "--pythonpath", type=str)
 parser.add_argument("-tomo_name", "--tomo_name", type=str)
 parser.add_argument("-config_file", "--config_file", type=str)
 parser.add_argument("-fold", "--fold", type=str, default="None")
-
+parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print out verbose messages.")
 args = parser.parse_args()
+
+# Configure logger
+log_level = logging.INFO
+if args.verbose:
+    log_level = logging.DEBUG
+
+logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger()
+
+# Log arguments
+logger.debug(f"Arguments received: {args}")
+
 pythonpath = args.pythonpath
 sys.path.append(pythonpath)
 
