@@ -1,5 +1,6 @@
 import argparse
 import sys
+import logging
 
 import numpy as np
 
@@ -9,8 +10,20 @@ parser.add_argument("-pythonpath", "--pythonpath", type=str)
 parser.add_argument("-config_file", "--config_file", type=str)
 parser.add_argument("-tomo_name", "--tomo_name", type=str)
 parser.add_argument("-fold", "--fold", type=str, default="None")
-
+parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print out verbose messages.")
 args = parser.parse_args()
+
+# Configure logger
+log_level = logging.INFO
+if args.verbose:
+    log_level = logging.DEBUG
+
+logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
+logit = logging.getLogger()
+
+# Log arguments
+logit.debug(f"Arguments received: {args}")
+
 pythonpath = args.pythonpath
 sys.path.append(pythonpath)
 
@@ -67,7 +80,7 @@ if run_job:
     output_classes = len(config.semantic_classes)
 
     device = get_device()
-    checkpoint = torch.load(model_path, map_location=device)
+    checkpoint = torch.load(model_path, map_location=device, weights_only=False)
 
     if 'model_descriptor' not in checkpoint.keys():
         warnings.warn("Model without model descriptor... it will be added")
