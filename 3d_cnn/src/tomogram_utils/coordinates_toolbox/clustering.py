@@ -18,7 +18,7 @@ def get_clusters_within_size_range(dataset: np.array, min_cluster_size: int,
         max_cluster_size = np.inf
     assert min_cluster_size <= max_cluster_size
 
-    labeled_clusters, num = morph.label(input=dataset,
+    labeled_clusters, num = morph.label(dataset,
                                         background=0,
                                         return_num=True,
                                         connectivity=connectivity)
