@@ -69,7 +69,7 @@ def rad_avg(image):
     axes = np.ogrid[tuple(slice(0,s) for s in image.shape)]
     r = hypot_nd(axes)
     
-    rbin = (bins*r/r.max()).astype(np.int)
+    rbin = (bins*r/r.max()).astype(int)
     radial_mean = ndimage.mean(image, labels=rbin, index=np.arange(1, rbin.max()+1))
     
     return radial_mean
