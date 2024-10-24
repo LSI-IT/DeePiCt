@@ -100,6 +100,13 @@ if ! [ -f $JOBSCRIPT ]; then
     exit 1
 fi
 
+if [ -d logs ]; then
+    log_verbose "The directory logs does not exist."
+    log_info "Creating the directory logs ."
+    mkdir logs
+    log_verbose "Directory logs created."
+fi
+
 log_verbose "SBATCH script contents:
 #!/usr/bin/env bash
 
