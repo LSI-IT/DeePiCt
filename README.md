@@ -95,6 +95,14 @@ git clone https://github.com/ZauggGroup/DeePiCt.git
 For convenience, you can modify and copy the file [3d_cnn/3d_deploy_cluster.sh](3d_cnn/3d_deploy_cluster.sh) into the 
 bin directory of your conda environment and make it executable.
 
+### Environment
+
+The environment variables `DEEPICT_ROOT` and `PYTHONPATH` need to be defined.
+
+`DEEPICT_ROOT` needs to point to the directory that you cloned DeePiCt into.  In the example above `DEEPICT_ROOT` would be `/folder/where/the/repository/will/be/cloned/DeePiCt` .
+
+`PYTHONPATH` needs to point to the 3d_cnn/src directory of DeePiCt.  In the example above `PYTHONPATH` would be `/folder/where/the/repository/will/be/cloned/DeePiCt/3d_cnn/src` .
+
 ## 3. How to run<a name="How_to_run"></a>
 
 Go to the folder where you plan to run the experiments. Create a
