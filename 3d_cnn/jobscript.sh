@@ -11,7 +11,6 @@
 
 module purge
 module load deepict/1.0.0
-module load cuda/12.2.2
 
 export QT_QPA_PLATFORM='offscreen'
 export DISPLAY=0.0
