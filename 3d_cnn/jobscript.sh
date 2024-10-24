@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --output={job.params.logdir}/%j-%x.out
+#SBATCH --output={job.params.logdir}/%j-%x.log
 #SBATCH --job-name={job.rule}
 #SBATCH --parsable
 
