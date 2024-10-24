@@ -81,7 +81,7 @@ conda install -c pytorch pytorch-gpu torchvision
 
 Install Keras:
 
-```
+```bash
 conda install -c conda-forge keras-gpu=2.3.1
 ```
 
