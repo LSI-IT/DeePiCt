@@ -151,14 +151,15 @@ rule filter_tomogram:
     conda:
         "envs/keras-env.yaml"
     params:
-        cutoff      = config["preprocessing"]["filtering"]["lowpass_cutoff"],
-        smoothen    = config["preprocessing"]["filtering"]["smoothen_cutoff"],
-        logdir      = config["cluster"]["logdir"],
-        walltime    = "0:30:00",
-        nodes       = 1,
-        cores       = 2,
-        memory      = "48G",
-        gres        = ''
+        cutoff   = config["preprocessing"]["filtering"]["lowpass_cutoff"],
+        smoothen = config["preprocessing"]["filtering"]["smoothen_cutoff"],
+        logdir   = config["cluster"]["logdir"],
+        walltime = "0:30:00",
+        ntasks   = 1,
+        cores    = 2,
+        memory   = "48G",
+        nodes    = 1,
+        gres     = ''
     shell:
         f"""
         python3 {srcdir}/scripts/match_spectrum.py \
@@ -177,13 +178,14 @@ rule remap_labels:
     conda:
         "envs/keras-env.yaml"
     params:
-        mapping     = str(config["preprocessing"]["remapping"]["mapping"]),
-        logdir      = config["cluster"]["logdir"],
-        walltime    = "0:10:00",
-        nodes       = 1,
-        cores       = 2,
-        memory      = "16G",
-        gres        = ''
+        mapping  = str(config["preprocessing"]["remapping"]["mapping"]),
+        logdir   = config["cluster"]["logdir"],
+        walltime = "0:10:00",
+        ntasks   = 1,
+        cores    = 2,
+        memory   = "16G",
+        nodes    = 1,
+        gres     = ''
     shell:
         f"""
         python3 {srcdir}/scripts/remap_labels.py \
@@ -202,15 +204,16 @@ rule slice_tomogram:
     conda:
         "envs/keras-env.yaml"
     params:
-        config = user_config_file,
-        flip_y = lambda wildcards: training_meta.loc[wildcards.prefix, "flip_y"] * "--flip_y",
+        config    = user_config_file,
+        flip_y    = lambda wildcards: training_meta.loc[wildcards.prefix, "flip_y"] * "--flip_y",
         sample_id = lambda wildcards: wildcards.prefix if training_meta.get("id") is None else training_meta.loc[wildcards.prefix, "id"],
-        logdir      = config["cluster"]["logdir"],
-        walltime    = "0:10:00",
-        nodes       = 1,
-        cores       = 2,
-        memory      = "16G",
-        gres        = ''
+        logdir    = config["cluster"]["logdir"],
+        walltime  = "0:10:00",
+        ntasks    = 1,
+        cores     = 2,
+        memory    = "16G",
+        nodes     = 1,
+        gres      = ''
     shell:
         f"""
         python3 {srcdir}/scripts/create_training_data.py \
@@ -230,13 +233,14 @@ rule train_evaluation_model:
     conda:
         "envs/keras-env.yaml"
     params:
-        config      = user_config_file,
-        logdir      = config["cluster"]["logdir"],
-        walltime    = "8:00:00",
-        nodes       = 1,
-        cores       = 4,
-        memory      = "32G",
-        gres        = '#SBATCH -p gpu\n#SBATCH --gres=gpu:2'
+        config   = user_config_file,
+        logdir   = config["cluster"]["logdir"],
+        walltime = "8:00:00",
+        ntasks   = 1,
+        cores    = 4,
+        memory   = "32G",
+        nodes    = 1,
+        gres     = '#SBATCH -p gpu\n#SBATCH --gres=gpu:2'
     shell:
         f"""
         python3 {srcdir}/scripts/train_eval_model.py \
@@ -253,13 +257,14 @@ rule train_production_model:
     conda:
         "envs/keras-env.yaml"
     params:
-        config      = user_config_file,
-        logdir      = config["cluster"]["logdir"],
-        walltime    = "2:00:00",
-        nodes       = 1,
-        cores       = 4,
-        memory      = "32G",
-        gres        = '#SBATCH -p gpu\n#SBATCH --gres=gpu:2'
+        config   = user_config_file,
+        logdir   = config["cluster"]["logdir"],
+        walltime = "2:00:00",
+        ntasks   = 1,
+        cores    = 4,
+        memory   = "32G",
+        nodes    = 1,
+        gres     = '#SBATCH -p gpu\n#SBATCH --gres=gpu:2'
     shell:
         f"""
         python3 {srcdir}/scripts/train_prod_model.py \
@@ -276,15 +281,16 @@ rule predict_organelles:
     conda:
         "envs/keras-env.yaml"
     params:
-        config      = user_config_file,
-        logdir      = config["cluster"]["logdir"],
-        walltime    = "0:30:00",
-        nodes       = 1,
-        cores       = 4,
-        memory      = "16G",
-        gres        = '#SBATCH -p gpu\n#SBATCH --gres=gpu:1'
+        config   = user_config_file,
+        logdir   = config["cluster"]["logdir"],
+        walltime = "0:30:00",
+        ntasks   = 1,
+        cores    = 4,
+        memory   = "16G",
+        nodes    = 1,
+        gres     = '#SBATCH -p gpu\n#SBATCH --gres=gpu:1'
     resources:
-        gpu=1
+        gpu = 1
     shell:
         f"""
         python3 {srcdir}/scripts/predict_organelles.py \
@@ -302,13 +308,14 @@ rule postprocess_organelles:
     conda:
         "envs/keras-env.yaml"
     params:
-        config      = user_config_file,
-        logdir      = config["cluster"]["logdir"],
-        walltime    = "0:10:00",
-        nodes       = 1,
-        cores       = 4,
-        memory      = "8G",
-        gres        = ''
+        config   = user_config_file,
+        logdir   = config["cluster"]["logdir"],
+        walltime = "0:10:00",
+        ntasks   = 1,
+        cores    = 4,
+        memory   = "8G",
+        nodes    = 1,
+        gres     = ''
     shell:
         f"""
         python3 {srcdir}/scripts/postprocess.py \
