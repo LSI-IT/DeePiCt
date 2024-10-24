@@ -5,8 +5,8 @@ config_file=$1
 export PYTHONPATH=${srcdir}/src:$PYTHONPATH
 echo PYTHONPATH=$PYTHONPATH
 
+module purge
 module load deepict/1.0.0
-module load cuda/12.2.2
 
 srun -t 10:00:00 -c 1 --mem 4G \
 snakemake \

@@ -92,6 +92,9 @@ cd /folder/where/the/repository/will/be/cloned
 git clone https://github.com/ZauggGroup/DeePiCt.git
 ```
 
+For convenience, you can modify and copy the file [3d_cnn/3d_deploy_cluster.sh](3d_cnn/3d_deploy_cluster.sh) into the 
+bin directory of your conda environment and make it executable.
+
 ## 3. How to run<a name="How_to_run"></a>
 
 Go to the folder where you plan to run the experiments. Create a
