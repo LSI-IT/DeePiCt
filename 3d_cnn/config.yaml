@@ -1,8 +1,8 @@
 # General parameters for training and prediction:
-dataset_table: "metadata.csv"   # Path to metadata csv file
-output_dir: "memb/out"                     # Output directory
-work_dir: "memb/work"                      # Destination directory of intermediate files
-model_path: "memb_model.pth"               # Output model using .pth extension
+dataset_table: "metadata.csv"  # Path to metadata csv file
+output_dir: "memb/out"         # Output directory
+work_dir: "memb/work"          # Destination directory of intermediate files
+model_path: "memb_model.pth"   # Output model using .pth extension
 
 # When running in the cluster:
 cluster:
@@ -20,7 +20,7 @@ cross_validation:
 
 training:
   active: false
-  semantic_classes: [ 'memb' ]         # List of k classes that the network will learn, separated by commas
+  semantic_classes: [ 'memb' ]       # List of k classes that the network will learn, separated by commas
   processing_tomo: "tomo"            # Column name in dataset_table corresponding to raw tomo used for training
   box_size: 64                       # Box side of the partition
   min_label_fraction: 0.001          # Minimum label required in each box considered for the training partition
