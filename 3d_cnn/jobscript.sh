@@ -5,8 +5,9 @@
 
 #SBATCH --mem={job.params.memory}
 #SBATCH --time={job.params.walltime}
-#SBATCH --ntasks={job.params.nodes}
+#SBATCH --ntasks={job.params.ntasks}
 #SBATCH --cpus-per-task={job.params.cores}
+#SBATCH --nodes={job.params.nodes}
 {job.params.gres}
 
 module purge
@@ -20,6 +21,5 @@ export gpu=$CUDA_VISIBLE_DEVICES
 echo CUDA_VISIBLE_DEVICES_in_job_script=$gpu
 echo CLUSTER NAME: $SLURM_CLUSTER_NAME
 echo CLUSTER NODE: $SLURMD_NODENAME
-echo CONDA ENV: $CONDA_DEFAULT_ENV
 
 {exec_job}
