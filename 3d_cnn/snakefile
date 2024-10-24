@@ -320,7 +320,7 @@ rule segmentation_evaluation:
 #         ntasks=1,
 #         cores=2,
 #         memory="2G",
-        nodes=1,
+#         nodes=1,
 #         gres=''
 #     resources:
 #         gpu=4
@@ -342,7 +342,7 @@ rule segmentation_evaluation:
 #         ntasks=1,
 #         cores=2,
 #         memory="15G",
-        nodes=1,
+#         nodes=1,
 #         gres=''
 #     shell:
 #         "python3 {scriptdir}/match_spectrum.py "
