@@ -1,6 +1,5 @@
 import argparse
 import sys
-import logging
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-pythonpath", "--pythonpath", type=str)
@@ -10,21 +9,15 @@ parser.add_argument("-fold", "--fold", type=str, default="None")
 parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print out verbose messages.")
 args = parser.parse_args()
 
-# Configure logger
-log_level = logging.INFO
-if args.verbose:
-    log_level = logging.DEBUG
-
-logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
-logit = logging.getLogger()
-
 # Log arguments
-logit.debug(f"Arguments received: {args}")
+if args.verbose:
+    print(f"Arguments received: {args}")
 
 pythonpath = args.pythonpath
 if pythonpath not in sys.path:
     sys.path.append(pythonpath)
-    logit.debug(f"Added {pythonpath} to sys.path")
+    if args.verbose:
+        print(f"Added {pythonpath} to sys.path")
 
 import os
 import ast
@@ -66,13 +59,13 @@ else:
     run_job = True
 
 if run_job:
-    logit.info(f"Processing tomo: {tomo_name}")
+    print(f"Processing tomo: {tomo_name}")
     tomo_output_dir, output_path = get_probability_map_path(config.output_dir, model_name, tomo_name,
                                                             config.pred_class)
 
     for file in listdir(tomo_output_dir):
         if "motl" in file:
-            logit.info(f"A motive list already exists: {file}")
+            print(f"A motive list already exists: {file}")
             shutil.move(os.path.join(tomo_output_dir, file), os.path.join(tomo_output_dir, "prev_" + file))
 
     assert os.path.isfile(output_path)
@@ -96,7 +89,7 @@ if run_job:
         prediction_dataset_thr[:, :, :ix] = np.zeros_like(prediction_dataset_thr[:, :, :ix])
         prediction_dataset_thr[:, :, -ix:] = np.zeros_like(prediction_dataset_thr[:, :, -ix:])
 
-    logit.info(f"Region mask: {config.region_mask}")
+    print(f"Region mask: {config.region_mask}")
     df = pd.read_csv(config.dataset_table, dtype={"tomo_name": str})
     df.set_index("tomo_name", inplace=True)
     masking_file = df[config.region_mask][tomo_name]
@@ -112,9 +105,9 @@ if run_job:
         centroids_list = []
         cluster_size_list = []
     else:
-        logit.info(f"masking_file: {masking_file}")
+        print(f"masking_file: {masking_file}")
         if isinstance(masking_file, float):
-            logit.info(f"No intersecting mask available of the type {config.region_mask} for tomo {tomo_name}.")
+            print(f"No intersecting mask available of the type {config.region_mask} for tomo {tomo_name}.")
             prediction_dataset_thr = prediction_dataset_thr.astype(np.int8)
             clusters_labeled_by_size, centroids_list, cluster_size_list = \
                 get_cluster_centroids(dataset=prediction_dataset_thr,
@@ -157,14 +150,14 @@ if run_job:
 
     clusters_output_path = get_post_processed_prediction_path(output_dir=config.output_dir, model_name=model_name,
                                                               tomo_name=tomo_name, semantic_class=config.pred_class)
-    logit.info(f"clusters_output_path: {clusters_output_path}")
+    print(f"clusters_output_path: {clusters_output_path}")
     clusters_output = 1*(clusters_labeled_by_size > 0)
     write_tomogram(output_path=clusters_output_path, tomo_data=clusters_output)
 
     os.makedirs(tomo_output_dir, exist_ok=True)
     if calculate_motl:
         motl_name = "motl_" + str(len(centroids_list)) + ".csv"
-        logit.info(f"motl_name: {motl_name}")
+        print(f"motl_name: {motl_name}")
         motl_file_name = os.path.join(tomo_output_dir, motl_name)
 
         if len(centroids_list) > 0:
@@ -172,12 +165,12 @@ if run_job:
                 list_of_peak_coordinates=centroids_list,
                 list_of_peak_scores=cluster_size_list, in_tom_format=False)
             motive_list_df.to_csv(motl_file_name, index=False, header=False)
-            logit.info(f"Motive list saved in {motl_file_name}")
+            print(f"Motive list saved in {motl_file_name}")
         else:
-            logit.info("Saving empty list!")
+            print("Saving empty list!")
             motive_list_df = pd.DataFrame({})
             motive_list_df.to_csv(motl_file_name, index=False, header=False)
 
 # For snakemake:
 with open(file=snakemake_pattern, mode="w") as f:
-    logit.info(f"Creating snakemake pattern: {snakemake_pattern}")
+    print(f"Creating snakemake pattern: {snakemake_pattern}")
