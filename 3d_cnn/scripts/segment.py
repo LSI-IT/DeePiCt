@@ -1,6 +1,5 @@
 import argparse
 import sys
-import logging
 
 import numpy as np
 
@@ -13,21 +12,15 @@ parser.add_argument("-fold", "--fold", type=str, default="None")
 parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print out verbose messages.")
 args = parser.parse_args()
 
-# Configure logger
-log_level = logging.INFO
-if args.verbose:
-    log_level = logging.DEBUG
-
-logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
-logit = logging.getLogger()
-
 # Log arguments
-logit.debug(f"Arguments received: {args}")
+if args.verbose:
+    print(f"Arguments received: {args}")
 
 pythonpath = args.pythonpath
 if pythonpath not in sys.path:
     sys.path.append(pythonpath)
-    logit.debug(f"Added {pythonpath} to sys.path")
+    if args.verbose:
+        print(f"Added {pythonpath} to sys.path")
 
 import os
 import ast
@@ -49,7 +42,7 @@ from networks.utils import get_training_testing_lists
 
 gpu = args.gpu
 if gpu is None:
-    logit.info("No CUDA_VISIBLE_DEVICES passed...")
+    print("No CUDA_VISIBLE_DEVICES passed...")
     if torch.cuda.is_available():
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 else:
@@ -86,7 +79,7 @@ if run_job:
 
     if 'model_descriptor' not in checkpoint.keys():
         warnings.warn("Model without model descriptor... it will be added")
-        logit.info("WARNING: model without model descriptor... it will be added")
+        print("WARNING: model without model descriptor... it will be added")
         model_descriptor = model_descriptor_from_config(config)
         checkpoint["model_descriptor"] = model_descriptor
         torch.save({
@@ -97,7 +90,7 @@ if run_job:
             'loss': checkpoint['loss'],
         }, model_path)
     else:
-        logit.info(f"Model trained under the following original settings: {checkpoint['model_descriptor']}")
+        print(f"Model trained under the following original settings: {checkpoint['model_descriptor']}")
 
     model_descriptor = checkpoint['model_descriptor']
 
@@ -113,7 +106,7 @@ if run_job:
     model.to(device)
 
     if torch.cuda.device_count() > 1:
-        logit.info(f"Let's use {torch.cuda.device_count()}GPUs!")
+        print(f"Let's use {torch.cuda.device_count()} GPUs!")
         model = nn.DataParallel(model)
 
         substring = 'module.'
@@ -143,13 +136,13 @@ if run_job:
     std_val = np.std(raw_dataset)
     del raw_dataset
 
-    logit.info(f"Segmenting tomo: {tomo_name}")
+    print(f"Segmenting tomo: {tomo_name}")
     segment_and_write(data_path=partition_path, model=model, label_name=model_name, mean_value=mean_val,
                       std_value=std_val)
-    logit.info("The segmentation has finished!")
+    print("The segmentation has finished!")
 
 # For snakemake:
 snakemake_pattern_dir = os.path.dirname(snakemake_pattern)
 os.makedirs(snakemake_pattern_dir, exist_ok=True)
 with open(file=snakemake_pattern, mode="w") as f:
-    logit.info(f"Creating snakemake pattern {snakemake_pattern}")
+    print(f"Creating snakemake pattern {snakemake_pattern}")
