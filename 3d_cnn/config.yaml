@@ -10,8 +10,8 @@ cluster:
 
 # Tomogram sets used for training or prediction
 tomos_sets:
-  training_list: ["190301/001", "190301/002"] # Tomograms in dataset_table for training ["tomo1", "tomo2", ...]
-  prediction_list: ["190301/006"]             # Tomograms in dataset_table for prediction ["tomo1", "tomo2", ...]
+  training_list: [ "190301/001", "190301/002" ] # Tomograms in dataset_table for training ["tomo1", "tomo2", ...]
+  prediction_list: [ "190301/006" ]             # Tomograms in dataset_table for prediction ["tomo1", "tomo2", ...]
 
 cross_validation:
   active: false
@@ -20,7 +20,7 @@ cross_validation:
 
 training:
   active: false
-  semantic_classes: ['memb']         # List of k classes that the network will learn, separated by commas
+  semantic_classes: [ 'memb' ]         # List of k classes that the network will learn, separated by commas
   processing_tomo: "tomo"            # Column name in dataset_table corresponding to raw tomo used for training
   box_size: 64                       # Box side of the partition
   min_label_fraction: 0.001          # Minimum label required in each box considered for the training partition
@@ -59,7 +59,7 @@ postprocessing_clustering:
   max_cluster_size: null                 # Maximum number of voxels per cluster
   clustering_connectivity: 3             # watershed algorithm clustering connectivity
   calculate_motl: False                  # Get the motl of centroids for each cluster
-  ignore_border_thickness: [10, 20, 10]  # ignore border for motl generation if calculate_motl is True
+  ignore_border_thickness: [ 10, 20, 10 ]  # ignore border for motl generation if calculate_motl is True
   region_mask: 'lamella_file'            # column name in metadata table for masking segmentation, e.g. lamella_file
   contact_mode: "intersection"           # "contact", "colocalization" or "intersection"
   contact_distance: 10
