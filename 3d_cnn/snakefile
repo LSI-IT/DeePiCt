@@ -108,7 +108,6 @@ if config["evaluation"]["segmentation_evaluation"]["active"]:
 
 if config["debug"]:
     print(f"TARGETS:\n{targets}")
-    print(targets)
 
 
 rule all:
