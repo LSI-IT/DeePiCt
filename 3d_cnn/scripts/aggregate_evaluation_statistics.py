@@ -5,10 +5,20 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-pythonpath", "--pythonpath", type=str)
 parser.add_argument("-fold", "--fold", type=str, default="None")
 parser.add_argument("-config_file", "--config_file", help="yaml_file", type=str)
-
+parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", default=False,
+                    help="Print out verbose messages.")
 args = parser.parse_args()
+
+# Log arguments
+if args.verbose:
+    print(f"Arguments received: {args}")
+
 pythonpath = args.pythonpath
-sys.path.append(pythonpath)
+
+if pythonpath not in sys.path:
+    sys.path.append(pythonpath)
+    if args.verbose:
+        print(f"Added {pythonpath} to sys.path")
 
 import os
 import ast
@@ -21,12 +31,20 @@ from constants.config import get_model_name
 
 config_file = args.config_file
 config = Config(user_config_file=config_file)
+if args.verbose:
+    print(f"config: {config}")
 tomo_name = args.tomo_name
 fold = ast.literal_eval(args.fold)
 
 model_path, model_name = get_model_name(config, fold)
+if args.verbose:
+    print(f"model_path: {model_path}")
+    print(f"model_name: {model_name}")
 snakemake_pattern = config.output_dir + "/predictions/." + model_name + "/" + \
                     config.pred_class + "/.{fold}.global_eval_snakemake".format(fold=str(fold))
+if args.verbose:
+    print(f"snakemake_pattern: {snakemake_pattern}")
+
 from networks.utils import get_training_testing_lists
 
 if isinstance(fold, int):
@@ -55,4 +73,3 @@ snakemake_pattern_dir = os.path.dirname(snakemake_pattern)
 os.makedirs(snakemake_pattern_dir, exist_ok=True)
 with open(file=snakemake_pattern, mode="w") as f:
     print("Creating snakemake pattern", snakemake_pattern)
-
