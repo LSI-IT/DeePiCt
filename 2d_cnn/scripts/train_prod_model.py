@@ -7,10 +7,10 @@ import pandas as pd
 import h5py
 
 from tensorflow import test as tft
-from keras.callbacks import TensorBoard
-from keras.layers import Input
-from keras.callbacks import EarlyStopping
-from keras.optimizers import Adam
+from tf_keras.callbacks import TensorBoard
+from tf_keras.layers import Input
+from tf_keras.callbacks import EarlyStopping
+from tf_keras.optimizers import Adam
 
 import datetime
 
