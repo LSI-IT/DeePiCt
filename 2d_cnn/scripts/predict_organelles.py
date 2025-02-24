@@ -5,7 +5,7 @@ import numpy as np
 import mrcfile
 import os
 
-from PatchUtil import *
+from PatchUtil import from_patches_3d, into_patches_3d
 from ConfigUtil import assemble_config, csv_list
 
 from UNet import dice_coefficient, neg_dice_coefficient
