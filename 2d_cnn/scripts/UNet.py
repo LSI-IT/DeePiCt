@@ -3,11 +3,11 @@ import numpy as np
 from tf_keras.callbacks import TensorBoard
 import tensorflow as tf
 from tf_keras.models import Model, load_model
-from tf_keras.layers import Input, BatchNormalization, Activation, Dense, Dropout, Cropping2D
-from tf_keras.layers.core import Reshape
-from tf_keras.layers.convolutional import Conv2D, Conv2DTranspose
-from tf_keras.layers.pooling import MaxPooling2D
-from tf_keras.layers.merge import concatenate, add
+from tf_keras.layers import Input, BatchNormalization, Activation, Dense, Dropout, Cropping2D, Reshape, Conv2D, Conv2DTranspose, MaxPooling2D, concatenate, add
+# from tf_keras.layers.core import Reshape
+# from tf_keras.layers.convolutional import Conv2D, Conv2DTranspose
+# from tf_keras.layers.pooling import MaxPooling2D
+# from tf_keras.layers.merge import concatenate, add
 from tf_keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from tf_keras.optimizers import Adam
 from tf_keras import backend as K
