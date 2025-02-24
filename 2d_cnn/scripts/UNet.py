@@ -1,17 +1,17 @@
 import numpy as np
 
-from keras.callbacks import TensorBoard
+from tf_keras.callbacks import TensorBoard
 import tensorflow as tf
-from keras.models import Model, load_model
-from keras.layers import Input, BatchNormalization, Activation, Dense, Dropout, Cropping2D
-from keras.layers.core import Reshape
-from keras.layers.convolutional import Conv2D, Conv2DTranspose
-from keras.layers.pooling import MaxPooling2D
-from keras.layers.merge import concatenate, add
-from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-from keras.optimizers import Adam
-from keras import backend as K
-from keras.preprocessing.image import ImageDataGenerator
+from tf_keras.models import Model, load_model
+from tf_keras.layers import Input, BatchNormalization, Activation, Dense, Dropout, Cropping2D
+from tf_keras.layers.core import Reshape
+from tf_keras.layers.convolutional import Conv2D, Conv2DTranspose
+from tf_keras.layers.pooling import MaxPooling2D
+from tf_keras.layers.merge import concatenate, add
+from tf_keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+from tf_keras.optimizers import Adam
+from tf_keras import backend as K
+from tf_keras.preprocessing.image import ImageDataGenerator
 
 
 def conv2d_block(input_tensor, n_filters, kernel_size=3):
