@@ -14,7 +14,7 @@ from tf_keras.optimizers import Adam
 import datetime
 
 from ConfigUtil import assemble_config
-from UNet import *
+from UNet import get_unet, neg_dice_coefficient, dice_coefficient, IDGWithLabels
 
 
 
